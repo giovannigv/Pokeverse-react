@@ -1,0 +1,115 @@
+.favoritesPage {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  min-height: 100vh;
+  padding: 2rem 1.5rem;
+  background: linear-gradient(180deg, #f7f9ff 0%, #eff3ff 100%);
+}
+
+.favoritesHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  text-align: center;
+}
+
+.favoritesTitle {
+  margin: 0;
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 700;
+  color: #1d266d;
+}
+
+.favoritesSubtitle {
+  margin: 0;
+  font-size: 1rem;
+  color: #4b5288;
+}
+
+.favoritesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  width: 100%;
+}
+
+.favoriteCard {
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  border: 1px solid rgba(29, 38, 109, 0.12);
+  border-radius: 1rem;
+  box-shadow: 0 18px 40px rgba(45, 62, 146, 0.08);
+  overflow: hidden;
+}
+
+.favoriteImage {
+  width: 100%;
+  min-height: 180px;
+  object-fit: cover;
+  background: #eef2ff;
+}
+
+.favoriteContent {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
+}
+
+.favoriteName {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #151b4d;
+}
+
+.favoriteDetails {
+  margin: 0;
+  color: #5f648b;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.removeButton {
+  align-self: stretch;
+  padding: 0.75rem 1rem;
+  border: none;
+  border-radius: 0.75rem;
+  background: #ff6b81;
+  color: #ffffff;
+  font-weight: 600;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.removeButton:hover {
+  background: #e04f6b;
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1.5rem;
+  border: 2px dashed rgba(29, 38, 109, 0.2);
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.8);
+  color: #3f4d8b;
+}
+
+.emptyStateTitle {
+  margin: 0 0 0.75rem;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.emptyStateText {
+  margin: 0;
+  max-width: 32rem;
+  text-align: center;
+  color: #5a6196;
+}

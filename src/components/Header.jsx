@@ -1,7 +1,8 @@
+import { NavLink } from 'react-router-dom';
 import styles from './Header.module.css';
 import { usePokeverse, ACTIONS } from '../context/PokeverseContext';
 
-function Header({ isTrainerFormOpen, setIsTrainerFormOpen }) {
+function Header() {
 
   const { state, dispatch } = usePokeverse();
 
@@ -11,30 +12,53 @@ function Header({ isTrainerFormOpen, setIsTrainerFormOpen }) {
         <span></span> PokéVerse
       </h1>
 
-      <div className={styles.trainerInfo}>
-        {state.trainer?.name ? (
-          <>
-            <span className={styles.trainerName}>👤 {state.trainer.name}</span>
-            <button className={styles.editBtn}
-              onClick={() => setIsTrainerFormOpen(true)}>
-              Edit
-            </button>
-          </>
-        ) : (
-          <button className={styles.setupBtn}
-            onClick={() => setIsTrainerFormOpen(!isTrainerFormOpen)}>
+      <nav className={styles.nav}>
+        <NavLink
+          to="/"
+          className={({ isActive }) =>
+            `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`
+          }
+        >
+          Home
+        </NavLink>
+
+        <NavLink
+          to="/favorites"
+          className={({ isActive }) =>
+            `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`
+          }
+        >
+          ❤️ Favorites ({state.favorites.length})
+        </NavLink>
+
+        <NavLink
+          to="/trainer"
+          className={({ isActive }) =>
+            `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`
+          }
+        >
+          👤 {state.trainer?.name ?? 'Trainer'}
+        </NavLink>
+      </nav>
+
+      <div className={styles.actions}>
+        {!state.trainer && (
+          <button
+            className={styles.setupBtn}
+            onClick={() => dispatch({ type: ACTIONS.TOGGLE_TRAINER_FORM })}
+          >
             Set up Trainer
           </button>
         )}
+
+        <button
+          className={styles.themeToggle}
+          onClick={() => dispatch({ type: ACTIONS.TOGGLE_THEME })}
+        >
+          {state.theme === 'light' ? '🌙' : '☀️'}
+        </button>
       </div>
 
-      <button onClick={() => dispatch({ type: ACTIONS.TOGGLE_THEME })} className={styles.themeToggle}>
-        {state.theme === 'light' ? '🌙' : '☀️'}
-      </button>
-
-      <div className={styles.favorites}>
-        ❤️ {state.favorites.length} {state.favorites.length === 1 ? 'favorite' : 'favorites'}
-      </div>
     </header>
   );
 }

@@ -4,12 +4,14 @@ const initialState = {
   favorites: [],
   trainer: null,
   theme: 'light',
+  isTrainerFormOpen: false
 }
 
 export const ACTIONS = {
   TOGGLE_FAVORITE: 'TOGGLE_FAVORITE',
   SET_TRAINER: 'SET_TRAINER',
   TOGGLE_THEME: 'TOGGLE_THEME',
+  TOGGLE_TRAINER_FORM: 'TOGGLE_TRAINER_FORM',
   CLEAR_FAVORITES: 'CLEAR_FAVORITES',
 }
 
@@ -44,6 +46,13 @@ function reducer(state, action) {
       return {
         ...state,
         favorites: []
+      }
+    }
+
+    case ACTIONS.TOGGLE_TRAINER_FORM: {
+      return {
+        ...state,
+        isTrainerFormOpen: !state.isTrainerFormOpen
       }
     }
 
