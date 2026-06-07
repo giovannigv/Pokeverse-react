@@ -7,3 +7,19 @@
 .pagination button:disabled {
   cursor: not-allowed;
 }
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.dark {
+  background: #1a1a2e;
+  color: #eee;
+}
+
+.dark .pokemon-card {
+  background: #16213e;
+  color: #eee;
+}

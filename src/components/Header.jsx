@@ -1,16 +1,20 @@
 import styles from './Header.module.css';
+import { usePokeverse, ACTIONS } from '../context/PokeverseContext';
 
-function Header({ favoritesCount, trainer, isTrainerFormOpen, setIsTrainerFormOpen }) {
+function Header({ isTrainerFormOpen, setIsTrainerFormOpen }) {
+
+  const { state, dispatch } = usePokeverse();
+
   return (
-    <header  className={styles.header}>
+    <header className={styles.header}>
       <h1 className={styles.logo}>
         <span></span> PokéVerse
       </h1>
 
       <div className={styles.trainerInfo}>
-        {trainer?.name ? (
+        {state.trainer?.name ? (
           <>
-            <span className={styles.trainerName}>👤 {trainer.name}</span>
+            <span className={styles.trainerName}>👤 {state.trainer.name}</span>
             <button className={styles.editBtn}
               onClick={() => setIsTrainerFormOpen(true)}>
               Edit
@@ -24,8 +28,12 @@ function Header({ favoritesCount, trainer, isTrainerFormOpen, setIsTrainerFormOp
         )}
       </div>
 
+      <button onClick={() => dispatch({ type: ACTIONS.TOGGLE_THEME })} className={styles.themeToggle}>
+        {state.theme === 'light' ? '🌙' : '☀️'}
+      </button>
+
       <div className={styles.favorites}>
-        ❤️ {favoritesCount} {favoritesCount === 1 ? 'favorite' : 'favorites'}
+        ❤️ {state.favorites.length} {state.favorites.length === 1 ? 'favorite' : 'favorites'}
       </div>
     </header>
   );

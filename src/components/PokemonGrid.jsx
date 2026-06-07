@@ -1,7 +1,12 @@
+import { usePokeverse, ACTIONS } from "../context/PokeverseContext";
+
 import PokemonCard from "./PokemonCard";
 import style from "./PokemonGrid.module.css"
 
-function PokemonGrid({ pokemons, children, favorites, onToggleFavorite }) {
+function PokemonGrid({ pokemons, children }) {
+
+  const { state, dispatch } = usePokeverse();
+
   return (
     <div>
       {children}
@@ -9,8 +14,8 @@ function PokemonGrid({ pokemons, children, favorites, onToggleFavorite }) {
         {pokemons.length === 0 ? <h2>No pokemons found</h2> : null}
         {pokemons.map(pokemon => (
           <PokemonCard key={pokemon.id} {...pokemon}
-            isFavorite={favorites.includes(pokemon.id)}
-            onToggleFavorite={onToggleFavorite}
+            isFavorite={state.favorites.includes(pokemon.id)}
+            onToggleFavorite={(id) => dispatch({ type: ACTIONS.TOGGLE_FAVORITE, payload: id })}
           />
         ))}
       </div>

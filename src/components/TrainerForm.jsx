@@ -1,26 +1,30 @@
 import { useState, useEffect } from 'react';
+import { usePokeverse, ACTIONS } from '../context/PokeverseContext';
+
 import styles from './TrainerForm.module.css';
 
 const regions = ['Kanto', 'Johto', 'Hoenn', 'Sinnoh'];
 const types = ['Fire', 'Water', 'Grass', 'Electric', 'Psychic'];
 
-function TrainerForm({ trainer, setTrainer, isOpen, setIsOpen }) {
+function TrainerForm({ isOpen, setIsOpen }) {
+
+    const { state, dispatch } = usePokeverse();
 
     const [form, setForm] = useState({
-        name: trainer.name || '',
-        email: trainer.email || '',
-        region: trainer.region || '',
-        favoriteType: trainer.favoriteType || '',
-        acceptTerms: trainer.acceptTerms || false
+        name: state.trainer?.name || '',
+        email: state.trainer?.email || '',
+        region: state.trainer?.region || '',
+        favoriteType: state.trainer?.favoriteType || '',
+        acceptTerms: state.trainer?.acceptTerms || false
     });
 
     const [saved, setSaved] = useState(false);
 
     useEffect(() => {
         if (!saved) return;
-        const timer = setTimeout(() => setSaved(false), 3000);
+        const timer = setTimeout(() => { setSaved(false); setIsOpen(false) }, 2000);
         return () => clearTimeout(timer);
-    }, [saved]);
+    }, [saved, setIsOpen]);
 
     const [errors, setErrors] = useState({});
 
@@ -50,9 +54,8 @@ function TrainerForm({ trainer, setTrainer, isOpen, setIsOpen }) {
         }
 
         setErrors({});
-        setTrainer(form);
+        dispatch({ type: ACTIONS.SET_TRAINER, payload: form });
         setSaved(true);
-        setTimeout(() => setIsOpen(false), 2000)
     }
 
     return (

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { usePokeverse } from './context/PokeverseContext';
 
 import './App.css';
 import Header from './components/Header';
@@ -8,8 +9,9 @@ import TrainerForm from './components/TrainerForm';
 
 function App() {
 
+  const { state } = usePokeverse();
+
   const [search, setSearch] = useState("");
-  const [favorites, setFavorites] = useState([]);
 
   const [pokemons, setPokemons] = useState([]);
   const [page, setPage] = useState(1);
@@ -21,7 +23,6 @@ function App() {
   const [error, setError] = useState(null);
   const [retryCount, setRetryCount] = useState(0);
 
-  const [trainer, setTrainer] = useState({});
   const [isTrainerFormOpen, setIsTrainerFormOpen] = useState(false);
 
 
@@ -76,25 +77,17 @@ function App() {
       return 0;
     });
 
-  function handleToggleFavorite(id) {
-    setFavorites(prevFavorites =>
-      prevFavorites.includes(id)
-        ? prevFavorites.filter(favId => favId !== id)
-        : [...prevFavorites, id]
-    )
-  }
-
   function handlePageChange(newPage) {
     setPage(newPage)
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   return (
-    <div className="App">
-      <Header favoritesCount={favorites.length} trainer={trainer} isTrainerFormOpen={isTrainerFormOpen} setIsTrainerFormOpen={setIsTrainerFormOpen}/>
+    <div className={`App ${state.theme === 'dark' ? 'dark' : ''}`}>
+      <Header setIsTrainerFormOpen={setIsTrainerFormOpen}/>
 
       {isTrainerFormOpen && (
-        <TrainerForm isOpen={isTrainerFormOpen} setIsOpen={setIsTrainerFormOpen} trainer={trainer} setTrainer={setTrainer}/>
+        <TrainerForm isOpen={isTrainerFormOpen} setIsOpen={setIsTrainerFormOpen}/>
       )}
 
       {!loading && error && (
@@ -109,11 +102,8 @@ function App() {
       {loading && <h2>Loading pokemons...</h2>}
 
       {!loading && !error && (
-        <>
-          <PokemonGrid pokemons={filteredPokemons}
-            favorites={favorites}
-            onToggleFavorite={handleToggleFavorite}
-          >
+        <div>
+          <PokemonGrid pokemons={filteredPokemons}>
             <h2>1 Generation - Kanto</h2>
             <Filters types={types}
               setSelectedType={setSelectedType}
@@ -134,7 +124,7 @@ function App() {
               Next
             </button>
           </div>
-        </>
+        </div>
       )}
     </div>
   );
