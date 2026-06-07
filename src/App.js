@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import './App.css';
 import Header from './components/Header';
 import PokemonGrid from './components/PokemonGrid';
+import Filters from './components/Filters';
+import TrainerForm from './components/TrainerForm';
 
 function App() {
 
@@ -10,9 +12,21 @@ function App() {
   const [favorites, setFavorites] = useState([]);
 
   const [pokemons, setPokemons] = useState([]);
+  const [page, setPage] = useState(1);
+  const limit = 18;
+  const [order, setOrder] = useState('low');
+  const [selectedType, setSelectedType] = useState('all');
+  const [types, setTypes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [retryCount, setRetryCount] = useState(0);
+
+  const [trainer, setTrainer] = useState({});
+  const [isTrainerFormOpen, setIsTrainerFormOpen] = useState(false);
+
+
+  const TOTAL_POKEMONS = 151;  // Gen 1
+  const totalPages = Math.ceil(TOTAL_POKEMONS / limit);
 
   useEffect(() => {
 
@@ -21,7 +35,9 @@ function App() {
         setLoading(true);
         setError(null);
 
-        const res = await fetch('https://pokeapi.co/api/v2/pokemon?limit=18');
+        const offset = (page - 1) * limit;
+
+        const res = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=${limit}&offset=${offset}`);
         const data = await res.json();
 
         const detailedPokemons = await Promise.all(
@@ -36,6 +52,10 @@ function App() {
         }));
 
         setPokemons(formatted);
+
+        // Create Filter by Types
+        setTypes(['all', ...new Set(formatted.map(p => p.type))]);
+
       } catch (error) {
         setError('Error loading pokemons: ' + error.message);
       } finally {
@@ -44,9 +64,17 @@ function App() {
     }
 
     loadPokemons()
-  }, [retryCount])
+  }, [retryCount, page])
 
-  const filteredPokemons = pokemons.filter(p => p.name.toLowerCase().includes(search.toLowerCase()))
+  const filteredPokemons = pokemons
+    .filter(p => selectedType === 'all' || p.type === selectedType)
+    .filter(p => p.name.toLowerCase().includes(search.toLowerCase())).sort((a, b) => {
+      if (order === 'az') return a.name.localeCompare(b.name);
+      if (order === 'za') return b.name.localeCompare(a.name);
+      if (order === 'high') return b.id - a.id;
+      if (order === 'low') return a.id - b.id;
+      return 0;
+    });
 
   function handleToggleFavorite(id) {
     setFavorites(prevFavorites =>
@@ -56,9 +84,18 @@ function App() {
     )
   }
 
+  function handlePageChange(newPage) {
+    setPage(newPage)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
   return (
     <div className="App">
-      <Header favoritesCount={favorites.length} />
+      <Header favoritesCount={favorites.length} trainer={trainer} isTrainerFormOpen={isTrainerFormOpen} setIsTrainerFormOpen={setIsTrainerFormOpen}/>
+
+      {isTrainerFormOpen && (
+        <TrainerForm isOpen={isTrainerFormOpen} setIsOpen={setIsTrainerFormOpen} trainer={trainer} setTrainer={setTrainer}/>
+      )}
 
       {!loading && error && (
         <div className="error-state">
@@ -73,17 +110,30 @@ function App() {
 
       {!loading && !error && (
         <>
-          <input className="search-input"
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            placeholder="Search..." />
-
           <PokemonGrid pokemons={filteredPokemons}
             favorites={favorites}
             onToggleFavorite={handleToggleFavorite}
           >
             <h2>1 Generation - Kanto</h2>
+            <Filters types={types}
+              setSelectedType={setSelectedType}
+              selectedType={selectedType}
+              search={search}
+              order={order}
+              onSearchChange={(value) => setSearch(value)}
+              onOrderChange={(value) => setOrder(value)}
+            />
           </PokemonGrid>
+
+          <div className="pagination">
+            <button onClick={() => handlePageChange(page - 1)} disabled={page === 1}>
+              Previous
+            </button>
+            <span>Page {page} of {totalPages}</span>
+            <button onClick={() => handlePageChange(page + 1)} disabled={page === totalPages}>
+              Next
+            </button>
+          </div>
         </>
       )}
     </div>
